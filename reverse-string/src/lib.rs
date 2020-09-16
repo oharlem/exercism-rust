@@ -1,6 +1,8 @@
+use unicode_segmentation::UnicodeSegmentation;
+
 pub fn reverse(input: &str) -> String {
     input
-        .chars()
+        .graphemes(true)
         .into_iter()
         .rev()
         .collect()
