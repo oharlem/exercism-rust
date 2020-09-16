@@ -1,15 +1,8 @@
 fn is_prime(n: u32) -> bool {
-
-    // If i can divide n on any number from 2 to n-1,
-    // i.e. any number except of 1 and itself,
-    // then it is not prime.
-    for x in 2..n {
-        if n % x == 0 {
-            return false;
-        }
-    }
-
-    true
+    // can run division on the first half only, because
+    // divisors form pairs and does not make sense to divide by a 2nd part of a pair
+    // if it is already divisible by 1st part
+    !(2..n / 2 + 1).any(|x| n % x == 0)
 }
 
 pub fn nth(n: u32) -> u32 {
@@ -19,18 +12,8 @@ pub fn nth(n: u32) -> u32 {
     // incrementing a counter if prime
     // until counter == n
 
-    // looks like authors guarantee that nth value is withing u32
-    let mut counter: u32 = 0;
-    let mut i: u32 = 2;
-
-    loop {
-        if is_prime(i) {
-            if counter == n {
-                return i;
-            }
-            counter += 1;
-        }
-        i += 1;
-    }
-
+    (2..)
+        .filter(|x| is_prime(*x))
+        .nth(n as usize)
+        .unwrap()
 }
