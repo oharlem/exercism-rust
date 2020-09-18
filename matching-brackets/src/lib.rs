@@ -1,5 +1,3 @@
-use unicode_segmentation::UnicodeSegmentation;
-
 pub fn brackets_are_balanced(string: &str) -> bool {
     /*
     Algorithm:
@@ -13,17 +11,19 @@ pub fn brackets_are_balanced(string: &str) -> bool {
         return true;
     }
 
-    let mut stack: Vec<&str> = Vec::new();
+    let mut stack: Vec<char> = Vec::new();
 
-    // convert to graphemes and leave only characters relevant for the function
-    let s: Vec<&str> = string
-        .graphemes(true)
-        .filter(|c| "[]{}()".contains(c))
+    let s: Vec<char> = string
+        .chars()
+        .filter(|c| "[]{}()".contains(&c.to_string()))
         .collect();
 
     for c in s {
+        let sc = &c.to_string();
+
         if stack.is_empty() {
-            if ")}]".contains(&c) {
+            // first element cannot be a closing bracket
+            if ")}]".contains(sc) {
                 return false;
             }
             stack.push(c);
@@ -31,7 +31,7 @@ pub fn brackets_are_balanced(string: &str) -> bool {
         }
 
         // opening bracket
-        if "({[".contains(&c) {
+        if "({[".contains(sc) {
             stack.push(c);
             continue;
         }
@@ -39,7 +39,7 @@ pub fn brackets_are_balanced(string: &str) -> bool {
         // closing bracket
         // compare with the last bracket,
         // if no match - fail, if match - remove
-        if !is_pair(stack.pop().unwrap(), c) {
+        if !is_pair(&stack.pop().unwrap().to_string(), sc) {
             return false;
         }
     }
