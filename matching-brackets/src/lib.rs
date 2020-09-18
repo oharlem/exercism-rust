@@ -13,14 +13,13 @@ pub fn brackets_are_balanced(string: &str) -> bool {
 
     let open: Vec<&str> = vec!["(", "{", "["];
     let close: Vec<&str> = vec![")", "}", "]"];
-    let s: Vec<&str> = string.graphemes(true).collect();
+
+    // convert to graphemes and leave only characters relevant for the function
+    let s: Vec<&str> = string.graphemes(true).into_iter().filter(|x|
+        open.contains(&x) || close.contains(&x)
+    ).collect();
 
     for c in s {
-        // ignore non-brackets
-        if !open.contains(&c) && !close.contains(&c) {
-            continue;
-        }
-
         if stack.is_empty() {
             if close.contains(&c) {
                 return false;
