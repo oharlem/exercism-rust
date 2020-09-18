@@ -1,8 +1,6 @@
 use unicode_segmentation::UnicodeSegmentation;
 
 pub fn brackets_are_balanced(string: &str) -> bool {
-    let mut stack: Vec<&str> = Vec::new();
-
     /*
     Algorithm:
     - if an opening bracket: add to the stack
@@ -11,50 +9,48 @@ pub fn brackets_are_balanced(string: &str) -> bool {
     -- if match, pop existing bracket
      */
 
-    let open: Vec<&str> = vec!["(", "{", "["];
-    let close: Vec<&str> = vec![")", "}", "]"];
+    if string.is_empty() {
+        return true;
+    }
+
+    let mut stack: Vec<&str> = Vec::new();
 
     // convert to graphemes and leave only characters relevant for the function
-    let s: Vec<&str> = string.graphemes(true).into_iter().filter(|x|
-        open.contains(&x) || close.contains(&x)
-    ).collect();
+    let s: Vec<&str> = string
+        .graphemes(true)
+        .filter(|c| "[]{}()".contains(c))
+        .collect();
 
     for c in s {
         if stack.is_empty() {
-            if close.contains(&c) {
+            if ")}]".contains(&c) {
                 return false;
             }
             stack.push(c);
             continue;
         }
 
-        if open.contains(&c) {
-            // opening bracket
+        // opening bracket
+        if "({[".contains(&c) {
             stack.push(c);
-        } else {
-            // closing bracket
-            // compare with the last bracket,
-            // if no match - fail, if match - remove
-            let top = stack.pop().unwrap();
-            if top != is_pair(c) {
-                return false;
-            }
+            continue;
+        }
+
+        // closing bracket
+        // compare with the last bracket,
+        // if no match - fail, if match - remove
+        if !is_pair(stack.pop().unwrap(), c) {
+            return false;
         }
     }
 
+    // if all pairs match, stack should be cleaned by the end
     stack.is_empty()
 }
 
-fn is_pair(c: &str) -> &str {
-    if c == "]" {
-        return "[";
+fn is_pair(top: &str, cur: &str) -> bool {
+    match (top, cur) {
+        ("[", "]") | ("(", ")") | ("{", "}") => true,
+        _ => false,
     }
-    if c == "}" {
-        return "{";
-    }
-    if c == ")" {
-        return "(";
-    }
-
-    ""
 }
