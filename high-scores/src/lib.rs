@@ -33,13 +33,13 @@ impl HighScores {
 
     // Return 3 highest scores
     pub fn personal_top_three(&self) -> Vec<u32> {
-        let mut ss = self.scores.clone();
-        ss.sort();
-        ss.reverse();
-        if ss.len() > 3 {
-            return ss[..3].to_vec();
+        let mut s = self.scores.clone();
+        s.sort();
+        s.reverse();
+        if s.len() > 3 {
+            return s[..3].to_vec();
         }
 
-        ss.to_vec()
+        s.to_vec()
     }
 }
