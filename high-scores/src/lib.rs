@@ -18,10 +18,6 @@ impl<'a> HighScores<'a> {
     // Return the latest (last) score")
     pub fn latest(&self) -> Option<u32> {
         self.scores.last().cloned()
-        // match self.scores.len() {
-        //     0 => None,
-        //     _ => Some(self.scores[self.scores.len() - 1]),
-        // }
     }
 
     // Return the highest score
