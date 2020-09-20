@@ -22,23 +22,11 @@ impl fmt::Display for Clock {
 
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let mut m = minutes % 60;
-        if m < 0 {
-            m = 60 + m;
-        }
-
-        // adjust hours for rolling over minutes
-        let h_rollover = minutes / 60;
-        let mut h = hours + h_rollover;
-        if minutes < 0 && minutes % 60 != 0 {
-            h -= 1;
-        }
-
-        h %= 24;
-        if h < 0 {
-            h = 24 + h;
-        }
-
+        let mut c = Clock {
+            hours,
+            minutes: 0,
+        };
+        let (h, m) = c.get_updated_time(minutes);
         Self {
             hours: h,
             minutes: m,
@@ -46,25 +34,25 @@ impl Clock {
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        // recalculate new time
-        /*
-            let clock = Clock::new(10, 3).add_minutes(-3);
-            assert_eq!(clock.to_string(), "10:00");
+        let (h, m) = self.get_updated_time(minutes);
+        Self {
+            hours: h,
+            minutes: m,
+        }
+    }
 
-            let clock = Clock::new(23, 59).add_minutes(2);
-            assert_eq!(clock.to_string(), "00:01");
-         */
-
-        let mut m = &self.minutes + minutes;
+    fn get_updated_time(&self, m2: i32) -> (i32, i32) {
+        let total_minutes = &self.minutes + m2;
+        let mut m = total_minutes;
         m %= 60;
         if m < 0 {
             m = 60 + m;
         }
 
         // adjust hours for rolling over minutes
-        let h_rollover = (&self.minutes + minutes) / 60;
-        let mut h = self.hours + h_rollover;
-        if (&self.minutes + minutes) < 0 && (&self.minutes + minutes) % 60 != 0 {
+        let h_rollover = total_minutes / 60;
+        let mut h = &self.hours + h_rollover;
+        if total_minutes < 0 && total_minutes % 60 != 0 {
             h -= 1;
         }
 
@@ -73,9 +61,6 @@ impl Clock {
             h = 24 + h;
         }
 
-        Self {
-            hours: h,
-            minutes: m,
-        }
+        (h, m)
     }
 }
