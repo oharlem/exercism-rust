@@ -26,41 +26,36 @@ impl Clock {
             hours,
             minutes: 0,
         };
-        let (h, m) = c.get_updated_time(minutes);
-        Self {
-            hours: h,
-            minutes: m,
-        }
+        c.recalculate_time(minutes);
+        c
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        let (h, m) = self.get_updated_time(minutes);
-        Self {
-            hours: h,
-            minutes: m,
-        }
+        let mut c = Clock {
+            hours: self.hours,
+            minutes: self.minutes,
+        };
+        c.recalculate_time(minutes);
+        c
     }
 
-    fn get_updated_time(&self, m2: i32) -> (i32, i32) {
-        let total_minutes = &self.minutes + m2;
-        let mut m = total_minutes;
-        m %= 60;
-        if m < 0 {
-            m = 60 + m;
+    fn recalculate_time(&mut self, minutes: i32) {
+        let total_minutes = &self.minutes + minutes;
+        self.minutes = total_minutes;
+        self.minutes %= 60;
+        if self.minutes < 0 {
+            self.minutes += 60;
         }
 
         // adjust hours for rolling over minutes
-        let h_rollover = total_minutes / 60;
-        let mut h = &self.hours + h_rollover;
+        self.hours += total_minutes / 60;
         if total_minutes < 0 && total_minutes % 60 != 0 {
-            h -= 1;
+            self.hours -= 1;
         }
 
-        h %= 24;
-        if h < 0 {
-            h = 24 + h;
+        self.hours %= 24;
+        if self.hours < 0 {
+            self.hours += 24;
         }
-
-        (h, m)
     }
 }
