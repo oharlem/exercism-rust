@@ -22,10 +22,7 @@ impl fmt::Display for Clock {
 
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let mut c = Clock {
-            hours,
-            minutes: 0,
-        };
+        let mut c = Clock { hours, minutes: 0 };
         c.recalculate_time(minutes);
         c
     }
