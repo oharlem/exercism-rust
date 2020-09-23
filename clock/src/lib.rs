@@ -16,22 +16,18 @@ impl fmt::Display for Clock {
 
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let m = Clock::recalc_time(hours * 60 + minutes);
-        Self { minutes: m }
+        let minutes = Clock::recalc_to_minutes(hours, minutes);
+        Self { minutes }
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        let m = Clock::recalc_time(self.minutes + minutes);
-        Self { minutes: m }
+        Self::new(0, self.minutes + minutes)
     }
 
-    fn recalc_time(minutes: i32) -> i32 {
-        let h = minutes
-            .div_euclid(60)
-            .rem_euclid(24);
-
-        let m = minutes
-            .rem_euclid(60);
+    fn recalc_to_minutes(hours: i32, minutes: i32) -> i32 {
+        let carry_hours = minutes.div_euclid(60);
+        let m = minutes.rem_euclid(60);
+        let h = (hours + carry_hours).rem_euclid(24);
 
         h * 60 + m
     }
