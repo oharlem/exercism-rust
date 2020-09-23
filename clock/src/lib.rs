@@ -2,49 +2,48 @@ use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub struct Clock {
-    hours: i32,
     minutes: i32,
 }
 
 impl fmt::Display for Clock {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:02}:{:02}", self.hours, self.minutes)
+        let h = self.minutes / 60;
+        let m = self.minutes % 60;
+
+        write!(f, "{:02}:{:02}", h, m)
     }
 }
 
 impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
-        let mut c = Clock { hours, minutes: 0 };
-        c.recalculate_time(minutes);
-        c
+        let m = Clock::recalculate_time(hours * 60 + minutes);
+        Self { minutes: m }
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
-        let mut c = Clock {
-            hours: self.hours,
-            minutes: self.minutes,
-        };
-        c.recalculate_time(minutes);
-        c
+        let m = Clock::recalculate_time(self.minutes + minutes);
+        Self { minutes: m }
     }
 
-    fn recalculate_time(&mut self, minutes: i32) {
-        let total_minutes = &self.minutes + minutes;
-        self.minutes = total_minutes;
-        self.minutes %= 60;
-        if self.minutes < 0 {
-            self.minutes += 60;
-        }
+    fn recalculate_time(minutes: i32) -> i32 {
+        let mut h = minutes / 60;
 
         // adjust hours for rolling over minutes
-        self.hours += total_minutes / 60;
-        if total_minutes < 0 && total_minutes % 60 != 0 {
-            self.hours -= 1;
+        if minutes < 0 && minutes % 60 != 0 {
+            h -= 1;
         }
 
-        self.hours %= 24;
-        if self.hours < 0 {
-            self.hours += 24;
+        h %= 24;
+        if h < 0 {
+            h += 24;
         }
+
+        let mut m = minutes;
+        m %= 60;
+        if m < 0 {
+            m += 60;
+        }
+
+        h * 60 + m
     }
 }
