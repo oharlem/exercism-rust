@@ -1,7 +1,7 @@
 pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
 
     // tests use (row, column) coords
-    let mut res: Vec<(usize, usize)> = Vec::new();
+    let mut res = Vec::new();
 
     let row_len = input.len();
 
@@ -19,7 +19,7 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
                 }
             }
 
-            res.push((r as usize, c as usize));
+            res.push((r, c));
         }
     }
 
