@@ -1,17 +1,11 @@
+use std::collections::HashSet;
+
 pub fn check(candidate: &str) -> bool {
-    // none of the symbols should repeat except spaces and hyphens
-    let s = candidate
+    let mut set = HashSet::new();
+
+    candidate
+        .to_lowercase()
         .chars()
-        .filter(|x| *x != ' ' && *x != '-')
-        .map(|x| x.to_ascii_lowercase());
-
-    let mut v = Vec::new();
-    for c in s {
-        if v.contains(&c) {
-            return false;
-        }
-        v.push(c);
-    }
-
-    true
+        .filter(|c| c.is_alphabetic())
+        .all(|c| set.insert(c))
 }
