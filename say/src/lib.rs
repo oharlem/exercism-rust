@@ -1,10 +1,6 @@
 use std::ops::Rem;
 
 pub fn encode(n: u64) -> String {
-    if n > 1_000_000_000 {
-        return String::from("out of range");
-    }
-
     if n == 0 {
         return String::from("zero");
     }
@@ -12,29 +8,31 @@ pub fn encode(n: u64) -> String {
     let mut out = String::new();
     let mut chunks = Vec::new();
     let mut n2 = n.clone();
-    // n2 = 1234567891;
 
     // split the number into chunks by thousands
     while n2 > 0 {
         chunks.push(n2.rem(1000));
         n2 /= 1000;
     }
-    // chunks.reverse();
 
     // convert the chunks to a number string
     // after every number from the end, add next word/thousand part descriptor
-    let ns = vec!["", "thousand", "million", "billion", "trillion"];
+    let ns = vec!["", "thousand", "million", "billion", "trillion", "quadrillion", "quintillion"];
     let chunk_pairs: Vec<_> = chunks.iter().enumerate().collect();
     for chunk in chunk_pairs {
-        // println!("CURRENT CHUNK: {:?}", chunk);
+        // process < 1000 differently
         if chunk.0 == 0 {
             out = format!("{}", conv(*chunk.1));
+            out = format!("{}", out.trim());
+            continue;
+        }
+        // skip 000
+        if *chunk.1 == 0 {
             continue;
         }
         out = format!("{} {} {}", conv(*chunk.1), ns[chunk.0], out);
         out = format!("{}", out.trim());
     }
-    out = format!("{}", out.trim());
 
     out
 }
@@ -62,7 +60,7 @@ pub fn conv(n: u64) -> String {
     // remainder
     let n2 = n % 100;
 
-    if n2 >= 0 && n2 <= 19 {
+    if n2 <= 19 {
         match n2 {
             1 => out = format!("{} one", out),
             2 => out = format!("{} two", out),
