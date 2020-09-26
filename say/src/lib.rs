@@ -1,18 +1,18 @@
 use std::ops::Rem;
 
 pub fn encode(n: u64) -> String {
-    // if n > 1_000_000_000 {
-    //     return String::from("out of range");
-    // }
-    //
-    // if n == 0 {
-    //     return String::from("zero");
-    // }
+    if n > 1_000_000_000 {
+        return String::from("out of range");
+    }
+
+    if n == 0 {
+        return String::from("zero");
+    }
 
     let mut out = String::new();
     let mut chunks = Vec::new();
     let mut n2 = n.clone();
-    n2 = 1234567890;
+    // n2 = 1234567891;
 
     // split the number into chunks by thousands
     while n2 > 0 {
@@ -23,70 +23,102 @@ pub fn encode(n: u64) -> String {
 
     // convert the chunks to a number string
     // after every number from the end, add next word/thousand part descriptor
-    let ns = vec!["", "thousand", "million", "billion"];
+    let ns = vec!["", "thousand", "million", "billion", "trillion"];
     let chunk_pairs: Vec<_> = chunks.iter().enumerate().collect();
     for chunk in chunk_pairs {
-        println!("CURRENT CHUNK: {:?}", chunk);
+        // println!("CURRENT CHUNK: {:?}", chunk);
         if chunk.0 == 0 {
-            out = format!("{}", chunk.1);
+            out = format!("{}", conv(*chunk.1));
             continue;
         }
-        out = format!("{} {} {}", chunk.1, ns[chunk.0], out);
+        out = format!("{} {} {}", conv(*chunk.1), ns[chunk.0], out);
+        out = format!("{}", out.trim());
     }
-    out.trim();
+    out = format!("{}", out.trim());
 
-    println!("N: {}", n2);
-    println!("chunks: {:#?}", chunks);
-    println!("OUT: {:?}", out);
+    out
+}
 
-    if n >= 10 && n <= 19 {
-        match n {
-            10 => out = String::from("ten"),
-            11 => out = String::from("eleven"),
-            12 => out = String::from("twelve"),
-            13 => out = String::from("thirteen"),
-            14 => out = String::from("fourteen"),
-            15 => out = String::from("fifteen"),
-            16 => out = String::from("sixteen"),
-            17 => out = String::from("seventeen"),
-            18 => out = String::from("eighteen"),
-            _ => out = String::from("nineteen"),
+// convert numbers up to 999 to string
+pub fn conv(n: u64) -> String {
+    let mut out = String::new();
+
+    if n > 99 {
+        match n.to_string().chars().nth(0).unwrap() {
+            '1' => out = String::from("one"),
+            '2' => out = String::from("two"),
+            '3' => out = String::from("three"),
+            '4' => out = String::from("four"),
+            '5' => out = String::from("five"),
+            '6' => out = String::from("six"),
+            '7' => out = String::from("seven"),
+            '8' => out = String::from("eight"),
+            _ => out = String::from("nine"),
+        }
+
+        out = format!("{} hundred", out);
+    }
+
+    // remainder
+    let n2 = n % 100;
+
+    if n2 >= 0 && n2 <= 19 {
+        match n2 {
+            1 => out = format!("{} one", out),
+            2 => out = format!("{} two", out),
+            3 => out = format!("{} three", out),
+            4 => out = format!("{} four", out),
+            5 => out = format!("{} five", out),
+            6 => out = format!("{} six", out),
+            7 => out = format!("{} seven", out),
+            8 => out = format!("{} eight", out),
+            9 => out = format!("{} nine", out),
+            10 => out = format!("{} ten", out),
+            11 => out = format!("{} eleven", out),
+            12 => out = format!("{} twelve", out),
+            13 => out = format!("{} thirteen", out),
+            14 => out = format!("{} fourteen", out),
+            15 => out = format!("{} fifteen", out),
+            16 => out = format!("{} sixteen", out),
+            17 => out = format!("{} seventeen", out),
+            18 => out = format!("{} eighteen", out),
+            19 => out = format!("{} nineteen", out),
+            _ => out = format!("{}", out),
         }
 
         return out;
     }
 
-    let nstr = n.to_string();
+    let nstr = (n % 100).to_string();
+    let mut cpos = 0;
 
-    let mut c2pos = 0;
-
-    if nstr.len() == 2 {
+    if n > 19 {
         match nstr.chars().nth(0).unwrap() {
-            '2' => out = String::from("twenty"),
-            '3' => out = String::from("thirty"),
-            '4' => out = String::from("fourty"),
-            '5' => out = String::from("fifty"),
-            '6' => out = String::from("sixty"),
-            '7' => out = String::from("seventy"),
-            '8' => out = String::from("eighty"),
-            _ => out = String::from("ninety"),
+            '2' => out = format!("{} twenty", out),
+            '3' => out = format!("{} thirty", out),
+            '4' => out = format!("{} forty", out),
+            '5' => out = format!("{} fifty", out),
+            '6' => out = format!("{} sixty", out),
+            '7' => out = format!("{} seventy", out),
+            '8' => out = format!("{} eighty", out),
+            _ => out = format!("{} ninety", out),
         }
 
-        c2pos = 1;
+        cpos = 1;
     }
 
-    match nstr.chars().nth(c2pos).unwrap() {
-        '1' => out = format!("{} {}", out, "one"),
-        '2' => out = format!("{} {}", out, "two"),
-        '3' => out = format!("{} {}", out, "three"),
-        '4' => out = format!("{} {}", out, "four"),
-        '5' => out = format!("{} {}", out, "five"),
-        '6' => out = format!("{} {}", out, "six"),
-        '7' => out = format!("{} {}", out, "seven"),
-        '8' => out = format!("{} {}", out, "eight"),
-        _ => out = format!("{} {}", out, "nine"),
+    match nstr.chars().nth(cpos).unwrap() {
+        '1' => out = format!("{}-one", out),
+        '2' => out = format!("{}-two", out),
+        '3' => out = format!("{}-three", out),
+        '4' => out = format!("{}-four", out),
+        '5' => out = format!("{}-five", out),
+        '6' => out = format!("{}-six", out),
+        '7' => out = format!("{}-seven", out),
+        '8' => out = format!("{}-eight", out),
+        '9' => out = format!("{}-nine", out),
+        _ => out = format!("{}", out),
     }
-
 
     out
 }
