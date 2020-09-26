@@ -66,7 +66,7 @@ pub fn conv(n: u64) -> String {
         out = format!("{} hundred", tmp_100);
     }
 
-    // remainder
+    // tens
     let n100 = n % 100;
     if n100 <= 19 {
         let n100_tmp = match n100 {
@@ -126,12 +126,8 @@ pub fn conv(n: u64) -> String {
         7 => "seven",
         8 => "eight",
         9 => "nine",
-        _ => "",
+        _ => return out,
     };
 
-    if n1 != "" {
-        out = format!("{}-{}", out, n1);
-    }
-
-    out
+    format!("{}-{}", out, n1)
 }
