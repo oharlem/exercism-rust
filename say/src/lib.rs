@@ -7,9 +7,12 @@ pub fn encode(n: u64) -> String {
     let mut n2 = n.clone();
 
     // split the number into chunks by thousands
+    let mut c = 0;
     while n2 > 0 {
-        chunks.push(n2 % 1000);
+        // could use functional approach, but imperative is faster
+        chunks.push((c, n2 % 1000));
         n2 /= 1000;
+        c += 1;
     }
 
     // convert the chunks to number strings
@@ -24,23 +27,18 @@ pub fn encode(n: u64) -> String {
         "quintillion",
     ];
 
-    let chunk_pairs: Vec<_> = chunks
-        .iter()
-        .enumerate()
-        .collect();
-
     let mut out = Vec::new();
-    for chunk in chunk_pairs {
+    for chunk in chunks {
         // skip 000
-        if *chunk.1 == 0 {
+        if chunk.1 == 0 {
             continue;
         }
 
         // process < 1000 differently
         if chunk.0 == 0 {
-            out.push(conv(*chunk.1));
+            out.push(conv(chunk.1));
         } else {
-            out.push(format!("{} {}", conv(*chunk.1), ns[chunk.0]));
+            out.push(format!("{} {}", conv(chunk.1), ns[chunk.0]));
         }
     }
 
@@ -91,33 +89,31 @@ pub fn conv(n: u64) -> String {
             17 => "seventeen",
             18 => "eighteen",
             19 => "nineteen",
-            _ => "",
+            _ => return out,
         };
-
-        if n100_tmp == "" {
-            return out;
-        }
 
         if out != "" {
             return format!("{} {}", out, n100_tmp);
         }
+
         return format!("{}", n100_tmp);
+    }
+
+    let n0 = match n100 / 10 {
+        2 => "twenty",
+        3 => "thirty",
+        4 => "forty",
+        5 => "fifty",
+        6 => "sixty",
+        7 => "seventy",
+        8 => "eighty",
+        _ => "ninety",
+    };
+
+    if out != "" {
+        out = format!("{} {}", out, n0);
     } else {
-        let n0 = match n100 / 10 {
-            2 => "twenty",
-            3 => "thirty",
-            4 => "forty",
-            5 => "fifty",
-            6 => "sixty",
-            7 => "seventy",
-            8 => "eighty",
-            _ => "ninety",
-        };
-        if out != "" {
-            out = format!("{} {}", out, n0);
-        } else {
-            out = format!("{}", n0);
-        }
+        out = format!("{}", n0);
     }
 
     let n1 = match n % 10 {
@@ -133,7 +129,7 @@ pub fn conv(n: u64) -> String {
         _ => "",
     };
 
-    if !n1.is_empty() {
+    if n1 != "" {
         out = format!("{}-{}", out, n1);
     }
 
