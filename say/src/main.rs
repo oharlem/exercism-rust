@@ -1,7 +1,5 @@
 mod lib;
 
-use lib::encode;
-
 use std::process::Command;
 
 fn main() {

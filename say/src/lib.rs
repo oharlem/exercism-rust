@@ -42,80 +42,88 @@ pub fn conv(n: u64) -> String {
     let mut out = String::new();
 
     if n > 99 {
-        match n.to_string().chars().nth(0).unwrap() {
-            '1' => out = String::from("one"),
-            '2' => out = String::from("two"),
-            '3' => out = String::from("three"),
-            '4' => out = String::from("four"),
-            '5' => out = String::from("five"),
-            '6' => out = String::from("six"),
-            '7' => out = String::from("seven"),
-            '8' => out = String::from("eight"),
-            _ => out = String::from("nine"),
-        }
+        let tmp_100 = match n / 100 {
+            1 => "one",
+            2 => "two",
+            3 => "three",
+            4 => "four",
+            5 => "five",
+            6 => "six",
+            7 => "seven",
+            8 => "eight",
+            _ => "nine",
+        };
 
-        out = format!("{} hundred", out);
+        out = format!("{} hundred", tmp_100);
     }
 
     // remainder
-    let n2 = n % 100;
+    let n100 = n % 100;
+    if n100 <= 19 {
+        let n100_tmp = match n100 {
+            1 => "one",
+            2 => "two",
+            3 => "three",
+            4 => "four",
+            5 => "five",
+            6 => "six",
+            7 => "seven",
+            8 => "eight",
+            9 => "nine",
+            10 => "ten",
+            11 => "eleven",
+            12 => "twelve",
+            13 => "thirteen",
+            14 => "fourteen",
+            15 => "fifteen",
+            16 => "sixteen",
+            17 => "seventeen",
+            18 => "eighteen",
+            19 => "nineteen",
+            _ => ""
+        };
 
-    if n2 <= 19 {
-        match n2 {
-            1 => out = format!("{} one", out),
-            2 => out = format!("{} two", out),
-            3 => out = format!("{} three", out),
-            4 => out = format!("{} four", out),
-            5 => out = format!("{} five", out),
-            6 => out = format!("{} six", out),
-            7 => out = format!("{} seven", out),
-            8 => out = format!("{} eight", out),
-            9 => out = format!("{} nine", out),
-            10 => out = format!("{} ten", out),
-            11 => out = format!("{} eleven", out),
-            12 => out = format!("{} twelve", out),
-            13 => out = format!("{} thirteen", out),
-            14 => out = format!("{} fourteen", out),
-            15 => out = format!("{} fifteen", out),
-            16 => out = format!("{} sixteen", out),
-            17 => out = format!("{} seventeen", out),
-            18 => out = format!("{} eighteen", out),
-            19 => out = format!("{} nineteen", out),
-            _ => out = format!("{}", out),
+        if n100_tmp == "" {
+            return out;
         }
 
-        return out;
+        return format!("{} {}", out, n100_tmp);
     }
 
-    let nstr = (n % 100).to_string();
+    let nstr = n100.to_string();
     let mut cpos = 0;
 
     if n > 19 {
-        match nstr.chars().nth(0).unwrap() {
-            '2' => out = format!("{} twenty", out),
-            '3' => out = format!("{} thirty", out),
-            '4' => out = format!("{} forty", out),
-            '5' => out = format!("{} fifty", out),
-            '6' => out = format!("{} sixty", out),
-            '7' => out = format!("{} seventy", out),
-            '8' => out = format!("{} eighty", out),
-            _ => out = format!("{} ninety", out),
-        }
+        let n0 = match nstr.chars().nth(0).unwrap() {
+            '2' => "twenty",
+            '3' => "thirty",
+            '4' => "forty",
+            '5' => "fifty",
+            '6' => "sixty",
+            '7' => "seventy",
+            '8' => "eighty",
+            _ => "ninety",
+        };
+        out = format!("{} {}", out, n0);
 
         cpos = 1;
     }
 
-    match nstr.chars().nth(cpos).unwrap() {
-        '1' => out = format!("{}-one", out),
-        '2' => out = format!("{}-two", out),
-        '3' => out = format!("{}-three", out),
-        '4' => out = format!("{}-four", out),
-        '5' => out = format!("{}-five", out),
-        '6' => out = format!("{}-six", out),
-        '7' => out = format!("{}-seven", out),
-        '8' => out = format!("{}-eight", out),
-        '9' => out = format!("{}-nine", out),
-        _ => out = format!("{}", out),
+    let n1 = match nstr.chars().nth(cpos).unwrap() {
+        '1' => "one",
+        '2' => "two",
+        '3' => "three",
+        '4' => "four",
+        '5' => "five",
+        '6' => "six",
+        '7' => "seven",
+        '8' => "eight",
+        '9' => "nine",
+        _ => "",
+    };
+
+    if !n1.is_empty() {
+        out = format!("{}-{}", out, n1);
     }
 
     out
