@@ -3,21 +3,24 @@ pub fn encode(n: u64) -> String {
         return String::from("zero");
     }
 
-    let mut chunks = Vec::new();
+    let mut chunks: Vec<(usize, u64)> = Vec::new();
     let mut n2 = n.clone();
 
     // split the number into chunks by thousands
     let mut c = 0;
     while n2 > 0 {
         // could use functional approach, but imperative is faster
-        chunks.push((c, n2 % 1000));
+        let tmp = n2 % 1000;
+        // skip 000
+        if tmp != 0 {
+            chunks.push((c, tmp));
+        }
         n2 /= 1000;
         c += 1;
     }
 
-    // convert the chunks to number strings
-    // after every number from the end, add next word/thousand part descriptor
-    let ns = vec![
+    // convert the chunks to place values
+    let ns: Vec<&str> = vec![
         "",
         "thousand",
         "million",
@@ -27,13 +30,8 @@ pub fn encode(n: u64) -> String {
         "quintillion",
     ];
 
-    let mut out = Vec::new();
+    let mut out: Vec<String> = Vec::new();
     for chunk in chunks {
-        // skip 000
-        if chunk.1 == 0 {
-            continue;
-        }
-
         // process < 1000 differently
         if chunk.0 == 0 {
             out.push(conv(chunk.1));
@@ -48,7 +46,7 @@ pub fn encode(n: u64) -> String {
 
 // convert numbers up to 999 to string
 pub fn conv(n: u64) -> String {
-    let mut out = String::new();
+    let mut out: String = String::new();
 
     if n > 99 {
         let tmp_100 = match n / 100 {
