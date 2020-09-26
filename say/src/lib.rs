@@ -3,7 +3,6 @@ pub fn encode(n: u64) -> String {
         return String::from("zero");
     }
 
-    let mut out = String::new();
     let mut chunks = Vec::new();
     let mut n2 = n.clone();
 
@@ -24,7 +23,13 @@ pub fn encode(n: u64) -> String {
         "quadrillion",
         "quintillion",
     ];
-    let chunk_pairs: Vec<_> = chunks.iter().enumerate().collect();
+
+    let chunk_pairs: Vec<_> = chunks
+        .iter()
+        .enumerate()
+        .collect();
+
+    let mut out = Vec::new();
     for chunk in chunk_pairs {
         // skip 000
         if *chunk.1 == 0 {
@@ -33,14 +38,14 @@ pub fn encode(n: u64) -> String {
 
         // process < 1000 differently
         if chunk.0 == 0 {
-            out = format!("{}", conv(*chunk.1));
+            out.push(conv(*chunk.1));
         } else {
-            out = format!("{} {} {}", conv(*chunk.1), ns[chunk.0], out);
+            out.push(format!("{} {}", conv(*chunk.1), ns[chunk.0]));
         }
-        out = format!("{}", out.trim());
     }
 
-    out
+    out.reverse();
+    out.join(" ")
 }
 
 // convert numbers up to 999 to string
@@ -93,7 +98,10 @@ pub fn conv(n: u64) -> String {
             return out;
         }
 
-        return format!("{} {}", out, n100_tmp);
+        if out != "" {
+            return format!("{} {}", out, n100_tmp);
+        }
+        return format!("{}", n100_tmp);
     } else {
         let n0 = match n100 / 10 {
             2 => "twenty",
@@ -105,7 +113,11 @@ pub fn conv(n: u64) -> String {
             8 => "eighty",
             _ => "ninety",
         };
-        out = format!("{} {}", out, n0);
+        if out != "" {
+            out = format!("{} {}", out, n0);
+        } else {
+            out = format!("{}", n0);
+        }
     }
 
     let n1 = match n % 10 {
