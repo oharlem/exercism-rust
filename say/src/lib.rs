@@ -1,13 +1,43 @@
+use std::ops::Rem;
+
 pub fn encode(n: u64) -> String {
+    // if n > 1_000_000_000 {
+    //     return String::from("out of range");
+    // }
+    //
+    // if n == 0 {
+    //     return String::from("zero");
+    // }
+
     let mut out = String::new();
+    let mut chunks = Vec::new();
+    let mut n2 = n.clone();
+    n2 = 1234567890;
 
-    if n > 99 {
-        return String::from("out of range");
+    // split the number into chunks by thousands
+    while n2 > 0 {
+        chunks.push(n2.rem(1000));
+        n2 /= 1000;
     }
+    // chunks.reverse();
 
-    if n == 0 {
-        return String::from("zero");
+    // convert the chunks to a number string
+    // after every number from the end, add next word/thousand part descriptor
+    let ns = vec!["", "thousand", "million", "billion"];
+    let chunk_pairs: Vec<_> = chunks.iter().enumerate().collect();
+    for chunk in chunk_pairs {
+        println!("CURRENT CHUNK: {:?}", chunk);
+        if chunk.0 == 0 {
+            out = format!("{}", chunk.1);
+            continue;
+        }
+        out = format!("{} {} {}", chunk.1, ns[chunk.0], out);
     }
+    out.trim();
+
+    println!("N: {}", n2);
+    println!("chunks: {:#?}", chunks);
+    println!("OUT: {:?}", out);
 
     if n >= 10 && n <= 19 {
         match n {
