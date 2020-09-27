@@ -1,3 +1,13 @@
+const PLACE_VALUES: [&str; 7] = [
+    "",
+    "thousand",
+    "million",
+    "billion",
+    "trillion",
+    "quadrillion",
+    "quintillion",
+];
+
 pub fn encode(n: u64) -> String {
     if n == 0 {
         return String::from("zero");
@@ -19,24 +29,13 @@ pub fn encode(n: u64) -> String {
         c += 1;
     }
 
-    // convert the chunks to place values
-    let ns: Vec<&str> = vec![
-        "",
-        "thousand",
-        "million",
-        "billion",
-        "trillion",
-        "quadrillion",
-        "quintillion",
-    ];
-
     let mut out: Vec<String> = Vec::new();
     for chunk in chunks {
         // process < 1000 differently
         if chunk.0 == 0 {
             out.push(conv(chunk.1));
         } else {
-            out.push(format!("{} {}", conv(chunk.1), ns[chunk.0]));
+            out.push(format!("{} {}", conv(chunk.1), PLACE_VALUES[chunk.0]));
         }
     }
 
