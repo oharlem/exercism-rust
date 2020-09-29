@@ -10,11 +10,14 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
     -- if they match, add to the output
      */
 
-    let hm_word = word_to_hashmap(&word);
+    let wl = word.to_lowercase();
+    let hm_word = word_to_hashmap(&wl);
     let mut out = HashSet::new();
     for a in possible_anagrams {
-        if word.to_lowercase() != *a.to_lowercase()
-            && hm_word == word_to_hashmap(&a) {
+        let al = a.to_lowercase();
+        if wl != al
+            && hm_word == word_to_hashmap(&al)
+        {
             out.insert(*a);
         }
     }
@@ -23,10 +26,9 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
 }
 
 fn word_to_hashmap(word: &str) -> HashMap<char, usize> {
-    let w = word.to_lowercase();
     let mut hm = HashMap::new();
 
-    for c in w.chars() {
+    for c in word.chars() {
         *hm.entry(c).or_insert(0) += 1;
     }
 
