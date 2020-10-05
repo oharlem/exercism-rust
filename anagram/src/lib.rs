@@ -34,3 +34,4 @@ fn word_to_hashmap(word: &str) -> HashMap<char, usize> {
 
     hm
 }
+

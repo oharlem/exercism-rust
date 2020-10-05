@@ -19,3 +19,4 @@ fn bench_anagrams_for(b: &mut Bencher) {
         anagrams_for(w, &a);
     })
 }
+
